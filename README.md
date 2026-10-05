@@ -1,188 +1,157 @@
-# ClimbingGeeks - Социална мрежа за катерачи
+# 🧗 ClimbingGeeks
 
-## Описание
+**A social network for Bulgaria's climbing community.** Climbers can share posts, join clubs and sign up for competitions in one place.
 
-**ClimbingGeeks** е уеб базирана платформа, създадена специално за катерачната общност в България.
-Приложението предоставя възможност за споделяне на съдържание, създаване на клубове и участие в състезания,
-като цели да свърже хората със споделена страст към катеренето.
+![Python](https://img.shields.io/badge/Python-3.9-3776ab?style=flat-square&logo=python&logoColor=white)
+![Django](https://img.shields.io/badge/Django-4.2-092e20?style=flat-square&logo=django&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-database-336791?style=flat-square&logo=postgresql&logoColor=white)
+![HTML/CSS/JS](https://img.shields.io/badge/Frontend-HTML%20%C2%B7%20CSS%20%C2%B7%20JS-e34f26?style=flat-square&logo=html5&logoColor=white)
 
----
+<!-- Add screenshots to docs/screenshots/ and uncomment:
+<p align="center">
+  <img src="docs/screenshots/home.png" width="48%" alt="Home page" />
+  <img src="docs/screenshots/clubs.png" width="48%" alt="Clubs page" />
+</p>
+-->
 
-## Технологичен стек
+## About
 
-| Компонент | Технология |
+I'm a climber myself, and the local scene is spread across club Facebook pages, group chats and posters. ClimbingGeeks puts it in one app: a feed for posts, pages for clubs, and a competition list people can register for.
+
+It started as my final project at SoftUni and my high school diploma project, and it's built with Django using separate apps for each part of the site.
+
+## Features
+
+**Everyone**
+- Browse posts, clubs and competitions
+- Search and filter content
+
+**Registered members**
+- Sign up, log in and keep a personal profile
+- Create, edit and delete their own posts
+- Join clubs
+- Register for competitions
+
+**Staff / administrators**
+- Create and manage clubs and competitions
+- Moderate posts and manage user accounts through the Django admin
+
+## Tech stack
+
+| Layer | Technology |
 |---|---|
 | Backend | Python 3.9, Django 4.2 |
-| База данни | PostgreSQL |
-| Frontend | HTML, CSS, JavaScript, Django Templates |
-| Допълнителни библиотеки | python-decouple, psycopg2 |
+| Database | PostgreSQL (`psycopg2`) |
+| Frontend | Django templates, HTML, CSS, JavaScript |
+| Images | Pillow |
+| Config | `python-decouple` (settings read from a `.env` file) |
 
----
+## Getting started
 
-## Функционалности
+### Prerequisites
+- Python 3.9+
+- PostgreSQL running locally
 
-### За всички потребители
-- Регистрация и вход в системата
-- Разглеждане на публикации, клубове и състезания
-- Търсене и филтриране на съдържание
-
-### За регистрирани потребители
-- Създаване, редактиране и изтриване на публикации
-- Създаване и управление на катерачни клубове
-- Присъединяване към съществуващи клубове
-- Записване за състезания
-- Персонален профил с лична информация
-
-### За администратори
-- Пълен контрол върху всички публикации, клубове и състезания
-- Управление на потребителите
-- Административен панел за модериране
-
----
-
-## Инсталация
-
-### 1. Клониране на репозиторито
+### Setup
 
 ```bash
-git clone <repository-url>
-cd SoftUniFinalExam
-```
+# 1. Clone the repository
+git clone https://github.com/KristiyanGorinov/ClimbingGeeks.git
+cd ClimbingGeeks
 
-### 2. Създаване на виртуална среда
-
-```bash
+# 2. Create and activate a virtual environment
 python -m venv venv
-```
+venv\Scripts\activate          # Windows
+source venv/bin/activate       # macOS / Linux
 
-Активиране на виртуалната среда:
-
-**Windows:**
-```bash
-venv\Scripts\activate
-```
-
-**Mac/Linux:**
-```bash
-source venv/bin/activate
-```
-
-### 3. Инсталиране на зависимостите
-
-```bash
+# 3. Install dependencies
 pip install -r requirements.txt
 ```
 
-### 4. Настройка на база данни PostgreSQL
+### Database
+
+Create an empty PostgreSQL database:
 
 ```sql
 CREATE DATABASE climbinggeeks_db;
 ```
 
-### 5. Конфигурация на средата
+### Environment variables
 
-Създайте файл `.env` в главната директория на проекта:
-
-```env
-DEBUG=True
-SECRET_KEY=django-insecure-_gffiy)d#s&=4c%2*$x9b%zh5x=7*t)lv&f1v+n92k)x2r@fv_
-DB_NAME=climbinggeeks_db
-DB_USER=postgres
-DB_PASSWORD=your-postgres-password
-DB_HOST=localhost
-DB_PORT=5432
-```
-
-> **Важно:** Заменете `your-secret-key-here` и `your-postgres-password` с вашите реални стойности.
-
-### 6. Изпълнение на миграциите
+Copy the example file and fill in your own values:
 
 ```bash
-python manage.py makemigrations
+cp .env.example .env
+```
+
+| Variable | Description |
+|---|---|
+| `SECRET_KEY` | Django secret key. Generate your own, and never reuse or commit one |
+| `DEBUG` | `True` for local development, `False` in production |
+| `ALLOWED_HOSTS` | Comma-separated hosts, e.g. `localhost,127.0.0.1` |
+| `DB_NAME` | Database name (`climbinggeeks_db`) |
+| `DB_USER` | Database user |
+| `DB_PASSWORD` | Database password |
+| `DB_HOST` | Usually `localhost` |
+| `DB_PORT` | Usually `5432` |
+
+To generate a secret key:
+
+```bash
+python -c "from django.core.management.utils import get_random_secret_key as k; print(k())"
+```
+
+### Run it
+
+```bash
 python manage.py migrate
-```
-
-### 7. Създаване на суперпотребител (администратор)
-
-```bash
 python manage.py createsuperuser
-```
-
-Следвайте инструкциите, за да въведете потребителско име, имейл и парола.
-
-### 8. Стартиране на сървъра
-
-```bash
 python manage.py runserver
 ```
 
-След успешен старт:
-- Приложението: [http://localhost:8000](http://localhost:8000)
-- Административен панел: [http://localhost:8000/admin](http://localhost:8000/admin)
+- App: http://localhost:8000
+- Admin panel: http://localhost:8000/admin
 
----
-
-## Структура на проекта
+## Project structure
 
 ```
-SoftUniFinalExam/
-│
-├── SoftUniFinalExam/        # Основен конфигурационен модул
-│   ├── settings.py          # Настройки на проекта
-│   ├── urls.py              # Глобални URL маршрути
-│   └── wsgi.py              # WSGI конфигурация
-│
-├── users/                   # Приложение за потребители
-├── posts/                   # Приложение за публикации
-├── clubs/                   # Приложение за клубове
-├── competitions/            # Приложение за състезания
-├── registration/            # Приложение за регистрации
-│
-├── templates/               # HTML шаблони
-├── static/                  # Статични файлове (CSS, JS, изображения)
-├── media/                   # Качени от потребителите файлове
-│
-├── manage.py                # Django управляващ скрипт
-├── requirements.txt         # Зависимости на проекта
-└── .env                     # Конфигурационни променливи (не се включва в Git)
+ClimbingGeeks/
+├── SoftUniFinalExam/   # Project configuration (settings, urls, wsgi)
+├── users/              # Accounts and profiles
+├── posts/              # Publications
+├── clubs/              # Climbing clubs
+├── competitions/       # Competitions
+├── registration/       # Competition registration
+├── templates/          # HTML templates
+├── static/             # CSS, JS, images
+├── manage.py
+└── requirements.txt
 ```
 
----
+## Try it out
 
-## Тестване на функционалностите
-
-След стартиране на приложението можете да тествате:
-
-| Функционалност | Инструкция |
+| I want to... | How |
 |---|---|
-| Регистрация на нов потребител | Бутон "Join" |
-| Създаване на публикация | Секция "Posts" |
-| Създаване на клуб | Секция "Clubs" *(изисква администраторски права)* |
-| Създаване на състезание | Секция "Competitions" *(изисква администраторски права)* |
-| Административен панел | Достъпен само за суперпотребители |
+| Create an account | Click **Join** |
+| Write a post | Go to **Posts** (logged in) |
+| Create a club or competition | Log in as a staff user, then use **Clubs** or **Competitions** |
+| Moderate content | Log in to `/admin` with your superuser account |
 
----
+## Roadmap
 
-## Бъдещи подобрения
+- [ ] Real-time chat between members
+- [ ] Notification system
+- [ ] Climber ratings
+- [ ] External calendar integration
+- [ ] Mobile app
 
-- Чат система в реално време
-- Мобилно приложение
-- Разширени нотификации
-- Рейтинг система за катерачи
-- Интеграция с външни календари
+## Author
 
----
+**Kristiyan Gorinov**, backend developer and climber from Varna, Bulgaria.
+[Portfolio](https://kgorinov.com) · [GitHub](https://github.com/KristiyanGorinov)
 
-## Автор
+Originally built under the supervision of Eng. Pavlina Linova at the Professional High School for Computer Modeling and Systems "Acad. Blagovest Sendov", Varna.
 
-**Кристиян Горинов** — XII клас  
-Професионална гимназия по компютърно моделиране и компютърни системи  
-"Акад. Благовест Сендов" — Варна
+## License
 
-**Ръководител-консултант:** инж. Павлина Линова
-
----
-
-## Лиценз
-
-Този проект е разработен като дипломна работа и е с образователна цел.
+Built for educational purposes. All rights reserved by the author unless a license file says otherwise.
