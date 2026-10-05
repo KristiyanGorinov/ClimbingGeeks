@@ -3,90 +3,257 @@
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'styles/front.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 {% endblock %}
 
 
 {% block content %}
-
-    <main>
-        <div class="container">
-            <!-- Left Column -->
-            <div class="column-left">
-                <div class="grid-item">
-                    <a href="https://chudniteskali.com" target="_blank">
-                        <img src="{% static 'images/post1.jpg' %}" alt="post">
+    <main class="user-homepage">
+        <!-- Hero Banner -->
+        <section class="hero-banner">
+            <div class="hero-content">
+                <h1 class="hero-title">Welcome to the Climbing Community, {{ user.username }}!</h1>
+                <p class="hero-subtitle">Connect, Compete, and Conquer New Heights with Fellow Climbers</p>
+                <div class="hero-actions">
+                    <a href="{% url 'clubs' %}" class="btn-hero">
+                        <i class="fas fa-users"></i> Explore Clubs
                     </a>
-                    <h3>The biggest gym in Varna has updated their boulder wall!</h3>
-                    <p>Apsaruh Vulchev</p>
-                </div>
-                <div class="grid-item">
-                    <a href="https://www.balkanclimbing.com" target="_blank">
-                        <img src="{% static 'images/post2.jpg' %}" alt="post">
+                    <a href="{% url 'competitions' %}" class="btn-hero btn-secondary">
+                        <i class="fas fa-trophy"></i> View Competitions
                     </a>
-                    <h3>The biggest climbing gym in the Balkans, located in Sofia is hosting monthly competitions!</h3>
-                    <p>BalkanClimbing</p>
                 </div>
             </div>
+        </section>
 
-            <!-- Center Feature -->
-            <div class="grid-item medium">
-                <a href="https://basecamp-shop.com/?_gl=1*1fwu95t*_up*MQ..*_gs*MQ..&gclid=Cj0KCQiA6Ou5BhCrARIsAPoTxrC1RcxiQhRv3Ot4Vvl7CZOeTH3m8c20F1NXJLAGnKQice3hli3zAQoaAoS3EALw_wcB"
-                   target="_blank">
-                    <img src="{% static 'images/front-image.png' %}" alt="Gift Guide">
-                </a>
-                <h2>The Best shop for the Climber in Your Life</h2>
-                <p>Whether you’re picking gifts for a gym rat, a diehard alpinist, or any climber in between, Basecamp
-                    has you covered.</p>
+               <!-- Featured Content Grid -->
+        <section class="featured-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-star"></i> Featured Stories
+                </h2>
+                <p class="section-subtitle">Discover inspiring climbing stories and updates from the community</p>
             </div>
 
-            <!-- Right Column -->
-            <div class="column-right">
-                <div class="grid-item">
-                    <a href="https://walltopia.com/the-last-stretch-to-the-top-the-successes-of-bulgarian-sport-climbing-in-2022/"
-                       target="_blank">
-                        <img src="{% static 'images/post3.jpg' %}" alt="post">
+            <div class="featured-grid-hybrid">
+                <!-- Hero Card (Left) -->
+                <div class="hero-feature-card">
+                    <a href="https://basecamp-shop.com" target="_blank" class="feature-link">
+                        <div class="feature-image">
+                            <img src="{% static 'images/front-image.png' %}" alt="Basecamp Shop">
+                            <span class="feature-badge">Featured</span>
+                        </div>
+                        <div class="feature-content">
+                            <div class="feature-category">Gear & Equipment</div>
+                            <h3 class="feature-title">The Ultimate Climber's Gear Destination</h3>
+                            <p class="feature-description">Basecamp offers everything from beginner essentials to professional gear for the most demanding ascents. No matter your skill level, Basecamp has everything in store that you'll ever need. Since everybody knows that your climbing shoes are the issue, we at ClimbingGeeks are astounded to announce that you can now shop with our exclusive 15% off new arrivals. After making your purchase, don't forget to go over and make a post about your newfound purchase, we can not wait to see what you have chosen!</p>
+                            <div class="feature-meta">
+                                <span class="meta-item">
+                                    <i class="fas fa-shopping-cart"></i> Shop Now
+                                </span>
+                                <span class="meta-item">
+                                    <i class="fas fa-clock"></i> 2 min read
+                                </span>
+                            </div>
+                        </div>
                     </a>
-                    <h3>The Last Stretch to the Top – the Successes of Bulgarian Sport Climbing in 2022</h3>
-                    <p>Walltopia</p>
                 </div>
-                <div class="grid-item">
-                    <a href="{% url 'clubs' %}">
-                        <img src="{% static 'images/post4.jpg' %}" alt="post">
-                    </a>
-                    <h3>Become part of the climbing community and join a club, connect with fellow climbers and
-                        explore!</h3>
-                    <p>GeekClimbers</p>
-                </div>
-            </div>
-        </div>
 
-        <!-- Editor's Picks Section -->
-        <div class="editors-picks-section">
-            <!-- Green Banner -->
-            <div class="green-banner">
-                <p>Not in a club? What are you waiting for???</p>
-                <a href="{% url 'clubs' %}">
-                    <button>Join NOW!</button>
-                </a>
-            </div>
-
-            <!-- Editor's Picks Row -->
-            <div class="editors-picks-container">
-                <h2>Most recent posts</h2>
-                {% for post in posts %}
-                    <div class="editors-picks">
-                    <div class="pick-item">
-                        <a href="{% url 'post_detail' post.slug %}">
-                            <img src="{{ post.image_url }}" alt="{{ post.title }}" class="post-image">
+                <!-- Smaller Cards (Right Grid) -->
+                <div class="side-features-grid">
+                    <div class="small-feature-card">
+                        <a href="https://chudniteskali.com" target="_blank" class="feature-link">
+                            <div class="feature-image">
+                                <img src="{% static 'images/post1.jpg' %}" alt="Gym Update">
+                            </div>
+                            <div class="feature-content">
+                                <h4 class="feature-title">Varna Gym Updates Boulder Wall</h4>
+                                <p class="feature-description">New routes and expanded climbing area at the biggest gym in Varna.</p>
+                                <div class="feature-author">
+                                    <i class="fas fa-user"></i> Apsaruh Vulchev
+                                </div>
+                            </div>
                         </a>
-                        <p>{{ post.title }}</p>
-                        <p>{{ post.content|truncatewords:10 }}</p>
                     </div>
-                {% endfor %}
+
+                    <div class="small-feature-card">
+                        <a href="https://www.balkanclimbing.com" target="_blank" class="feature-link">
+                            <div class="feature-image">
+                                <img src="{% static 'images/post2.jpg' %}" alt="Competitions">
+                            </div>
+                            <div class="feature-content">
+                                <h4 class="feature-title">Monthly Climbing Competitions</h4>
+                                <p class="feature-description">Sofia's largest gym hosts regular events for all skill levels.</p>
+                                <div class="feature-author">
+                                    <i class="fas fa-user"></i> BalkanClimbing
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="small-feature-card">
+                        <a href="https://walltopia.com/the-last-stretch-to-the-top-the-successes-of-bulgarian-sport-climbing-in-2022/"
+                           target="_blank" class="feature-link">
+                            <div class="feature-image">
+                                <img src="{% static 'images/post3.jpg' %}" alt="Bulgarian Success">
+                            </div>
+                            <div class="feature-content">
+                                <h4 class="feature-title">Bulgarian Climbing Success</h4>
+                                <p class="feature-description">Celebrating 2022 achievements in Bulgarian sport climbing.</p>
+                                <div class="feature-author">
+                                    <i class="fas fa-user"></i> Walltopia
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="small-feature-card">
+                        <a href="{% url 'clubs' %}" class="feature-link">
+                            <div class="feature-image">
+                                <img src="{% static 'images/post4.jpg' %}" alt="Climbing Community">
+                            </div>
+                            <div class="feature-content">
+                                <h4 class="feature-title">Join the Community</h4>
+                                <p class="feature-description">Connect with fellow climbers and explore together.</p>
+                                <div class="feature-author">
+                                    <i class="fas fa-user"></i> GeekClimbers
+                                </div>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
+        <!-- Community Call-to-Action -->
+        <section class="cta-section">
+            <div class="cta-card">
+                <div class="cta-content">
+                    <h2 class="cta-title">
+                        <i class="fas fa-users"></i> Join Our Growing Community
+                    </h2>
+                    <p class="cta-description">
+                        Connect with climbers of all levels, share experiences, and find climbing partners.
+                        Whether you're a beginner or a seasoned pro, there's a place for you here.
+                    </p>
+                    <div class="cta-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">{{ users_count|default:"100+" }}</span>
+                            <span class="stat-label">Active Members</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">{{ clubs_count|default:"10+" }}</span>
+                            <span class="stat-label">Clubs</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">{{ competitions_count|default:"5+" }}</span>
+                            <span class="stat-label">Competitions</span>
+                        </div>
+                    </div>
+                    <a href="{% url 'clubs' %}" class="btn-cta">
+                        <i class="fas fa-sign-in-alt"></i> Join a Club Today
+                    </a>
+                </div>
+                <div class="cta-image">
+                    <img src="{% static 'images/post4.jpg' %}" alt="Climbing Community">
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Posts Section -->
+        <section class="posts-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-newspaper"></i> Recent Community Posts
+                </h2>
+                <p class="section-subtitle">Latest updates and discussions from our climbing community</p>
+            </div>
+
+            {% if posts %}
+                <div class="posts-grid">
+                    {% for post in posts %}
+                        <div class="post-card">
+                            <a href="{% url 'post_detail' post.slug %}" class="post-link">
+                                <div class="post-image">
+                                    {% if post.image_url %}
+                                        <img src="{{ post.image_url }}" alt="{{ post.title }}">
+                                    {% else %}
+                                        <div class="post-image-placeholder">
+                                            <i class="fas fa-mountain"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="post-content">
+                                    <h3 class="post-title">{{ post.title|truncatechars:60 }}</h3>
+                                    <p class="post-excerpt">{{ post.content|truncatewords:20 }}</p>
+                                    <div class="post-meta">
+                                        <span class="meta-item">
+                                            <i class="fas fa-user"></i> {{ post.user.username|default:"Unknown" }}
+                                        </span>
+                                        <span class="meta-item">
+                                            <i class="fas fa-calendar"></i> {{ post.uploaded_at|date:"M d, Y" }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="view-all-container">
+                    <a href="{% url 'posts' %}" class="btn-view-all">
+                        <i class="fas fa-arrow-right"></i> View All Posts
+                    </a>
+                </div>
+            {% else %}
+                <div class="empty-posts">
+                    <i class="fas fa-newspaper"></i>
+                    <h3>No Posts Yet</h3>
+                    <p>Be the first to share your climbing experiences!</p>
+                    <a href="{% url 'create_post' %}" class="btn-view-all">
+                        <i class="fas fa-plus"></i> Create First Post
+                    </a>
+                </div>
+            {% endif %}
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="quick-actions">
+            <h2 class="section-title">Quick Actions</h2>
+            <div class="actions-grid">
+                <a href="{% url 'create_post' %}" class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <h3>Create Post</h3>
+                    <p>Share your climbing experiences</p>
+                </a>
+
+                <a href="{% url 'competitions' %}" class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3>Join Competition</h3>
+                    <p>Test your skills</p>
+                </a>
+
+                <a href="{% url 'profile' %}" class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <h3>Your Profile</h3>
+                    <p>Update your info</p>
+                </a>
+
+                <a href="{% url 'clubs' %}" class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Find Clubs</h3>
+                    <p>Connect with climbers</p>
+                </a>
+            </div>
+        </section>
     </main>
-
-
 {% endblock %}

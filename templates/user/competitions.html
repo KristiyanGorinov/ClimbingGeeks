@@ -6,32 +6,155 @@
 {% endblock %}
 {% block content %}
     <main>
-        {% if request.user.is_staff or request.user.is_superuser or request.user|in_group:"staff" %}
-            <div class="add-competition-button-container">
-                <a href="{% url 'create_competition' %}" class="add-competition-button">Add Competition</a>
+        <!-- Hero Section with Search -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">Climbing Competitions</h1>
+                <p class="hero-subtitle">Discover upcoming climbing competitions, join events, and challenge yourself</p>
+                <div class="hero-search-container">
+                    <input type="text" class="search-bar" placeholder="Search for competitions, clubs, or locations...">
+                </div>
             </div>
-        {% endif %}
-        <div class="competitions-container">
-            {% for competition in competitions %}
-                <div class="competition-card">
-                    <h2>{{ competition.club.title }}</h2>
-                    <div class="competition-header">
-                        <h3 class="competition-title">{{ competition.title }}</h3>
-                    </div>
+        </section>
 
-                    <p class="competition-content">{{ competition.context|truncatewords:20 }}</p>
+        <!-- Competitions Section -->
+        <section class="competitions-section">
+            {% if competitions %}
+                <!-- Add Competition Button (Admin only) -->
+                {% if request.user.is_staff or request.user.is_superuser or request.user|in_group:"staff" %}
+                <div class="add-competition-button-container">
+                    <a href="{% url 'create_competition' %}" class="add-competition-button">
+                        <span>+</span> Create New Competition
+                    </a>
+                </div>
+                {% endif %}
 
+                <!-- Competitions Grid -->
+                <div class="competitions-container">
+                    {% for competition in competitions %}
+                        <div class="competition-card">
+                            <!-- Club Badge -->
+                            <span class="club-badge">{{ competition.club.title }}</span>
 
-                    <a href="{% url 'competition_detail' competition.slug %}" class="competition-button">View
-                        Competition</a>
+                            <!-- Competition Header -->
+                            <div class="competition-header">
+                                <h3 class="competition-title">{{ competition.title }}</h3>
+                            </div>
+
+                            <!-- Competition Content -->
+                            <p class="competition-content">{{ competition.context|truncatewords:30 }}</p>
+
+                            <!-- Competition Actions -->
+                            <div class="competition-actions">
+                                <a href="{% url 'competition_detail' competition.slug %}" class="competition-button">
+                                    View Competition Details
+                                </a>
+
+                                <!-- Admin Actions -->
+                                {% if request.user.is_staff or request.user.is_superuser or request.user|in_group:"staff" %}
+                                <div class="admin-actions">
+                                    <a href="{% url 'edit_competition' competition.slug %}" class="competition-button-edit">
+                                        Edit
+                                    </a>
+                                    <a href="{% url 'delete_competition' competition.slug %}" class="competition-button-delete">
+                                        Delete
+                                    </a>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <!-- Empty State -->
+                <div class="empty-state">
+                    <h3>No competitions scheduled yet</h3>
+                    <p>Stay tuned for upcoming climbing competitions! Check back soon for exciting events and challenges.</p>
                     {% if request.user.is_staff or request.user.is_superuser or request.user|in_group:"staff" %}
-                        <a href="{% url 'edit_competition' competition.slug %}" class="competition-button-edit">Edit Competition</a>
-                        <a href="{% url 'delete_competition' competition.slug %}" class="competition-button-delete">Delete Competition</a>
+                    <div style="margin-top: 30px;">
+                        <a href="{% url 'create_competition' %}" class="add-competition-button">
+                            <span>+</span> Create First Competition
+                        </a>
+                    </div>
                     {% endif %}
                 </div>
-            {% endfor %}
-        </div>
-    </main>
-    
+            {% endif %}
+        </section>
 
+        <!-- Floating Add Button for Mobile (Admin only) -->
+        {% if request.user.is_staff or request.user.is_superuser or request.user|in_group:"staff" %}
+        <a href="{% url 'create_competition' %}" class="floating-add-button">+</a>
+        {% endif %}
+    </main>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Search functionality
+        const searchBar = document.querySelector('.search-bar');
+        const competitionCards = document.querySelectorAll('.competition-card');
+
+        // Search function
+        if (searchBar) {
+            searchBar.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase().trim();
+
+                // Add loading effect
+                competitionCards.forEach(card => {
+                    card.style.opacity = '0.6';
+                    card.style.transform = 'scale(0.98)';
+                });
+
+                setTimeout(() => {
+                    competitionCards.forEach(card => {
+                        const title = card.querySelector('.competition-title').textContent.toLowerCase();
+                        const content = card.querySelector('.competition-content').textContent.toLowerCase();
+                        const club = card.querySelector('.club-badge').textContent.toLowerCase();
+
+                        if (searchTerm === '' ||
+                            title.includes(searchTerm) ||
+                            content.includes(searchTerm) ||
+                            club.includes(searchTerm)) {
+                            card.style.display = 'flex';
+                            card.style.opacity = '1';
+                            card.style.transform = 'scale(1)';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                }, 200);
+            });
+
+            // Add search icon functionality
+            searchBar.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+
+            searchBar.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        }
+
+        // Add smooth hover effects for cards
+        competitionCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.zIndex = '10';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.zIndex = '1';
+            });
+        });
+
+        // Add parallax effect to hero section
+        window.addEventListener('scroll', function() {
+            const hero = document.querySelector('.hero-section');
+            const scrolled = window.pageYOffset;
+            const rate = scrolled * -0.5;
+
+            if (hero) {
+                hero.style.transform = `translate3d(0, ${rate}px, 0)`;
+            }
+        });
+    });
+    </script>
 {% endblock %}

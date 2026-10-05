@@ -2,43 +2,150 @@
 {% load static %}
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'styles/admin/admin_panel.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 {% endblock %}
 {% block content %}
     <main class="admin-club-panel">
-        <h1 class="admin-title">Club Admin Panel</h1>
-        <div class="panels-container">
+        <div class="admin-header">
+            <h1 class="admin-title">
+                <i class="fas fa-user-friends"></i> Club Members Management
+            </h1>
+            <p class="admin-subtitle">Manage club memberships and user assignments</p>
+        </div>
+
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-icon club-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ clubs.count }}</h3>
+                    <p>Total Clubs</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="clubs-grid">
             {% for club in clubs %}
-                <div class="panel">
-                    <h2>{{ club.title }}</h2>
-                    <ul>
-                        {% for member in club.members.all %}
-                            <li>{{ member.username }}
-                                <div class="button-container">
-                                    {% if request.user.is_superuser %}
-                                    <form method="POST" action="{% url 'remove_user_from_club' club.id member.id %}">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn-delete">Remove User</button>
-                                    </form>
-                                    {% endif %}
-                                </div>
-                            </li>
-                        {% empty %}
-                            <p>No members in this club.</p>
-                        {% endfor %}
-                    </ul>
+                <div class="club-card">
+                    <div class="club-card-header">
+                        <div class="club-info">
+                            <h2 class="club-name">
+                                <i class="fas fa-users"></i> {{ club.title }}
+                            </h2>
+                            <p class="club-location">
+                                <i class="fas fa-map-marker-alt"></i> {{ club.location|default:"No location specified" }}
+                            </p>
+                        </div>
+                        <div class="club-stats">
+                            <span class="member-count-badge">
+                                <i class="fas fa-user-friends"></i> {{ club.members.count }} members
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="club-card-body">
+                        {% if club.members.all %}
+                            <div class="table-container">
+                            <table class="members-table">
+                                <thead>
+                                    <tr>
+                                        <th>Member</th>
+                                        <th>Email</th>
+                                        <th>Joined</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for member in club.members.all %}
+                                        <tr>
+                                            <td class="user-cell">
+                                                <div class="user-avatar">
+                                                    <i class="fas fa-user"></i>
+                                                </div>
+                                                <div class="user-info">
+                                                    <strong>{{ member.username }}</strong>
+                                                    <small>
+                                                        {% if member.is_superuser %}
+                                                            <span class="role-tag admin-tag">Admin</span>
+                                                        {% elif member.is_staff %}
+                                                            <span class="role-tag staff-tag">Staff</span>
+                                                        {% else %}
+                                                            <span class="role-tag user-tag">User</span>
+                                                        {% endif %}
+                                                    </small>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="email-tag">
+                                                    <i class="fas fa-envelope"></i> {{ member.email|truncatechars:20 }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="date-tag">
+                                                    <i class="fas fa-calendar"></i> {{ member.date_joined|date:"M Y" }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                {% if request.user.is_superuser %}
+                                                    <form method="POST" action="{% url 'remove_user_from_club' club.id member.id %}"
+                                                          class="action-form"
+                                                          onsubmit="return confirm('Are you sure you want to remove {{ member.username }} from {{ club.title }}?')">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn-action btn-remove" title="Remove from Club">
+                                                            <i class="fas fa-user-minus"></i> Remove
+                                                        </button>
+                                                    </form>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                            <div class="empty-state">
+                                <i class="fas fa-users-slash"></i>
+                                <p>No members in this club yet</p>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="club-card-footer">
+                        <div class="club-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-clock"></i> Created: {{ club.created_at|date:"M d, Y"|default:"Unknown" }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="empty-state full-width">
+                    <i class="fas fa-users"></i>
+                    <h3>No Clubs Found</h3>
+                    <p>There are no clubs to manage at the moment.</p>
+                    <a href="{% url 'create_club' %}" class="btn-primary">
+                        <i class="fas fa-plus"></i> Create First Club
+                    </a>
                 </div>
             {% endfor %}
         </div>
     </main>
+
     {% if messages %}
         <div id="message-container">
             {% for message in messages %}
-                <div class="message {{ message.tags }}">
+                <div class="message message-{{ message.tags }}">
+                    <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
                     {{ message }}
                 </div>
             {% endfor %}
         </div>
     {% endif %}
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const messages = document.querySelectorAll("#message-container .message");
@@ -48,7 +155,7 @@
                     message.style.opacity = "0";
                     setTimeout(() => message.remove(), 1000);
                 });
-            }, 3000);
+            }, 5000);
         });
     </script>
 {% endblock %}

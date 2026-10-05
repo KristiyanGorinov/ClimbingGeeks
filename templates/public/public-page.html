@@ -1,66 +1,243 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClimbingGeeks | Climbing Community</title>
     <link rel="stylesheet" href="{% static 'styles/public.css' %}"/>
-    <title>GeekClimbers</title>
+    <style>
+        /* Local styles - no external dependencies */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@800;900&display=swap');
+
+        /* Basic icon styles */
+        .icon {
+            display: inline-block;
+            font-style: normal;
+            font-weight: normal;
+            line-height: 1;
+            font-family: 'Segoe UI Symbol', 'Arial Unicode MS', sans-serif;
+        }
+    </style>
 </head>
-<header>
-    <nav>
-        <div class="guest">
-            <a href={% url 'home' %}>Home</a>
-            <a href={% url 'about' %}>About me</a>
-            <a href={% url 'register' %}>Create User's Profile</a>
-            <a href={% url 'login' %}>Login into Profile</a>
-        </div>
-    </nav>
-</header>
 <body>
+    <!-- Simplified Background -->
+    <div class="bg-pattern"></div>
 
-<div class="container">
-    <!-- Logo -->
-    <img src="{% static 'images/logo.png' %}" alt="logo" class="logo">
+    <!-- Navigation -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <img src="{% static 'images/logo.png' %}" alt="GeekClimbers Logo" class="nav-logo">
+                <span class="brand-text">ClimbingGeeks</span>
+            </div>
+            <div class="nav-menu">
+                <a href="{% url 'home' %}" class="nav-link active">
+                    <span class="icon">🏠</span>
+                    <span>Home</span>
+                </a>
+                <a href="{% url 'about' %}" class="nav-link">
+                    <span class="icon"></span>
+                    <span>About</span>
+                </a>
+                <a href="{% url 'register' %}" class="nav-link highlight">
+                    <span class="icon"></span>
+                    <span>Join</span>
+                </a>
+                <a href="{% url 'login' %}" class="nav-link cta-nav">
+                    <span class="icon">🔑</span>
+                    <span>Sign In</span>
+                </a>
+            </div>
+            <button class="mobile-menu-btn">
+                <span class="icon">☰</span>
+            </button>
+        </nav>
+    </header>
 
-    <!-- Title -->
-    <h1 class="title">Welcome to <strong>GeekClimbers</strong></h1>
+    <!-- Hero Section -->
+    <main class="hero-section">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="icon">🏔️</span>
+                <span>Climbing Community</span>
+            </div>
 
-    <!-- Buttons -->
-    <div class="button-container">
-        <a href={% url 'login' %}>
-            <button class="button">Login</button>
-        </a>
-        <a href={% url 'register' %}>
-            <button class="button">Register</button>
-        </a>
-    </div>
-</div>
+            <h1 class="hero-title">
+                <span class="title-line">Welcome to</span>
+                <span class="title-highlight">ClimbingGeeks</span>
+            </h1>
 
-<div class="gallery">
-    <div class="gallery-column left">
-        <img src="{% static 'images/image1.jpg' %}" alt="Gallery Image 1">
-        <img src="{% static 'images/image2.jpg' %}" alt="Gallery Image 2">
-        <img src="{% static 'images/image3.jpg' %}" alt="Gallery Image 3">
-        <img src="{% static 'images/image4.jpg' %}" alt="Gallery Image 4">
-    </div>
+            <p class="hero-subtitle">
+                Connect with fellow climbing enthusiasts, share experiences,
+                and discover the best climbing clubs suiting your preferences.
+            </p>
 
-    <div class="gallery-column right">
-        <img src="{% static 'images/image5.jpg' %}" alt="Gallery Image 5">
-        <img src="{% static 'images/image6.jpg' %}" alt="Gallery Image 6">
-        <img src="{% static 'images/image7.jpg' %}" alt="Gallery Image 7">
-        <img src="{% static 'images/image8.jpg' %}" alt="Gallery Image 8">
-    </div>
-</div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="icon">👥</span>
+                    <div>
+                        <span class="stat-number">1,200+</span>
+                        <span class="stat-label">Active Climbers</span>
+                    </div>
+                </div>
+                <div class="stat">
+                    <span class="icon">🧗</span>
+                    <div>
+                        <span class="stat-number">500+</span>
+                        <span class="stat-label">Posts Shared</span>
+                    </div>
+                </div>
+                <div class="stat">
+                    <span class="icon">🏆</span>
+                    <div>
+                        <span class="stat-number">50+</span>
+                        <span class="stat-label">Clubs</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-actions">
+                <a href="{% url 'login' %}" class="btn btn-primary">
+                    <span class="icon">🔑</span>
+                    <span>Log in</span>
+                </a>
+                <a href="{% url 'register' %}" class="btn btn-secondary">
+                    <span class="icon">✨</span>
+                    <span>Create Free Account</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <img src="{% static 'images/logo.png' %}" alt="GeekClimbers Logo" class="hero-logo">
+        </div>
+    </main>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <h2 class="section-title">Why Join ClimbingGeeks?</h2>
+        <p class="section-subtitle">Everything you need to elevate your climbing experience</p>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <span class="icon">🗺️</span>
+                </div>
+                <h3>Discover Clubs</h3>
+                <p>Find and share your experiences within a community of your choice.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <span class="icon">📅</span>
+                </div>
+                <h3>Join Events</h3>
+                <p>Participate in local climbing events and group sessions.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <span class="icon">💬</span>
+                </div>
+                <h3>Community Forum</h3>
+                <p>Connect with climbers worldwide and share tips.</p>
+            </div>
 
 
-<!-- footer -->
-<footer>
-    <p>&copy; 2024 ClimbingGeeks by Kristiyan. All rights reserved.</p>
-</footer>
+        </div>
+    </section>
 
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <img src="{% static 'images/logo.png' %}" alt="GeekClimbers Logo" class="footer-logo">
+                <div>
+                    <h3>ClimbingGeeks</h3>
+                    <p>Connecting climbers worldwide</p>
+                </div>
+            </div>
 
+            <div class="footer-links">
+                <div class="link-group">
+                    <h4>Platform</h4>
+                    <a href="{% url 'home' %}">Home</a>
+                    <a href="{% url 'about' %}">About</a>
+                    <a href="{% url 'register' %}">Join</a>
+                    <a href="{% url 'login' %}">Login</a>
+                </div>
+
+                <div class="link-group">
+                    <h4>Community</h4>
+                    <a href="{% url 'competitions' %}">Events</a>
+                    <a href="{% url 'posts' %}">Forums</a>
+                    <a href="{% url 'posts' %}">Blog</a>
+                    <a href="{% url 'clubs' %}">Clubs</a>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2024 <strong>ClimbingGeeks</strong> by Kristiyan. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Back to Top -->
+    <button class="back-to-top">
+        <span class="icon">↑</span>
+    </button>
+
+    <!-- JavaScript -->
+    <script>
+        // Mobile menu
+        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
+            document.querySelector('.nav-menu').classList.toggle('active');
+        });
+
+        // Back to top
+        const backToTop = document.querySelector('.back-to-top');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        backToTop.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Gallery click
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            item.addEventListener('click', function() {
+                alert('Image gallery would open here');
+            });
+        });
+
+        // Newsletter
+        document.querySelector('.newsletter-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = this.querySelector('input[type="email"]').value;
+            alert(`Thank you for subscribing with: ${email}`);
+            this.reset();
+        });
+    </script>
 </body>
 </html>
-

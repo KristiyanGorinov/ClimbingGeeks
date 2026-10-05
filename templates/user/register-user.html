@@ -1,106 +1,205 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Register</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
-          crossorigin="anonymous">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
-          integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP"
-          crossorigin="anonymous">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
-          crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'styles/register.css' %}"/>
 
-</head>
-<body>
-<a id="logo" href="{% url 'home' %}">
-    <img id="logo-img" src="{% static 'images/logo.png' %}" class="logo" alt="logo"/>
-</a>
-<div class="container h-100">
-    <div class="d-flex justify-content-center h-100">
-        <div class="user_card">
-            <div class="d-flex justify-content-center">
-                <h3 id="form-title">REGISTER ACCOUNT</h3>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'styles/register.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="register-container">
+    <!-- Main Register Card -->
+    <div class="register-card">
+        <!-- Header -->
+        <div class="register-header">
+            <div class="register-logo">
+                <img src="{% static 'images/logo.png' %}" alt="ClimbingGeeks Logo">
             </div>
-            <div class="d-flex justify-content-center form_container">
+            <h1 class="register-title">Join ClimbingGeeks</h1>
+            <p class="register-subtitle">Create your account and start your climbing journey</p>
+        </div>
 
-                <form method="POST" action="">
-                    {% csrf_token %}
-                    <div class="input-group mb-3">
-                        <div class="input-group-append">
-                            <span class="input-group-text"><i class="fas fa-user"></i></span>
-                        </div>
+        <!-- Registration Form -->
+        <div class="register-form-container">
+            <form method="POST" action="" class="register-form">
+                {% csrf_token %}
+
+                <!-- Username Field -->
+                <div class="form-group">
+                    <label for="id_username" class="form-label">
+                        <i class="fas fa-user"></i>
+                        Username
+                    </label>
+                    <div class="input-with-icon">
                         {{ form.username }}
                     </div>
-                    <div class="input-group mb-2">
-                        <div class="input-group-append">
-                            <span class="input-group-text"><i class="fas fa-envelope-square"></i></span>
-                        </div>
+                    {% if form.username.errors %}
+                    <div class="field-errors">
+                        {% for error in form.username.errors %}
+                        <span class="error"><i class="fas fa-exclamation-circle"></i> {{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Email Field -->
+                <div class="form-group">
+                    <label for="id_email" class="form-label">
+                        <i class="fas fa-envelope"></i>
+                        Email Address
+                    </label>
+                    <div class="input-with-icon">
                         {{ form.email }}
                     </div>
-                    <div class="input-group mb-2">
-                        <div class="input-group-append">
-                            <span class="input-group-text"><i class="fas fa-key"></i></span>
-                        </div>
+                    {% if form.email.errors %}
+                    <div class="field-errors">
+                        {% for error in form.email.errors %}
+                        <span class="error"><i class="fas fa-exclamation-circle"></i> {{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Password Field -->
+                <div class="form-group">
+                    <label for="id_password1" class="form-label">
+                        <i class="fas fa-lock"></i>
+                        Password
+                    </label>
+                    <div class="input-with-icon">
                         {{ form.password1 }}
                     </div>
-                    <div class="input-group mb-2">
-                        <div class="input-group-append">
-                            <span class="input-group-text"><i class="fas fa-key"></i></span>
-                        </div>
+                    {% if form.password1.errors %}
+                    <div class="field-errors">
+                        {% for error in form.password1.errors %}
+                        <span class="error"><i class="fas fa-exclamation-circle"></i> {{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Confirm Password Field -->
+                <div class="form-group">
+                    <label for="id_password2" class="form-label">
+                        <i class="fas fa-lock"></i>
+                        Confirm Password
+                    </label>
+                    <div class="input-with-icon">
                         {{ form.password2 }}
                     </div>
-
-                    <div class="d-flex justify-content-center mt-3 login_container">
-                        <input class="btn login_btn" type="submit" value="Register Account">
+                    {% if form.password2.errors %}
+                    <div class="field-errors">
+                        {% for error in form.password2.errors %}
+                        <span class="error"><i class="fas fa-exclamation-circle"></i> {{ error }}</span>
+                        {% endfor %}
                     </div>
-                </form>
-            </div>
-
-            {% if form.errors %}
-                <div class="custom-error-container">
-                    {% for field in form %}
-                        {% if field.errors %}
-                            <strong>{{ field.label }}:</strong>
-                            <ul class="custom-errorlist">
-                                {% for error in field.errors %}
-                                    <li>{{ error }}</li>
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
-                    {% endfor %}
+                    {% endif %}
                 </div>
-            {% endif %}
 
-            <div class="mt-4">
-                <div class="d-flex justify-content-center links">
-                    Already have an account? <a href="{% url 'login' %}" class="ml-2">Login</a>
+                <!-- Password Requirements -->
+                <div class="password-requirements">
+                    <h5><i class="fas fa-info-circle"></i> Password Requirements:</h5>
+                    <ul>
+                        <li><i class="fas fa-check-circle"></i> At least 8 characters</li>
+                        <li><i class="fas fa-check-circle"></i> Can't be too common</li>
+                        <li><i class="fas fa-check-circle"></i> Can't be entirely numeric</li>
+                        <li><i class="fas fa-check-circle"></i> Should match confirmation</li>
+                    </ul>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="form-group">
+                    <button type="submit" class="register-btn">
+                        <i class="fas fa-user-plus"></i>
+                        Create Account
+                    </button>
+                </div>
+            </form>
+
+            <!-- Login Link -->
+            <div class="login-link">
+                <p>Already have an account?</p>
+                <a href="{% url 'login' %}" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Sign In
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Benefits Sidebar -->
+    <div class="benefits-sidebar">
+        <h3>Why Join ClimbingGeeks?</h3>
+
+        <div class="benefit-card">
+            <div class="benefit-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="benefit-content">
+                <h4>Join Clubs</h4>
+                <p>Connect with local climbing communities and find partners</p>
+            </div>
+        </div>
+
+
+        <div class="benefit-card">
+            <div class="benefit-icon">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="benefit-content">
+                <h4>Find Events</h4>
+                <p>Discover competitions and climbing events near you</p>
+            </div>
+        </div>
+
+        <div class="benefit-card">
+            <div class="benefit-icon">
+                <i class="fas fa-comments"></i>
+            </div>
+            <div class="benefit-content">
+                <h4>Community Forum</h4>
+                <p>Share tips, ask questions, and learn from other climbers</p>
+            </div>
+        </div>
+
+        <div class="community-stats">
+            <h4>Our Community</h4>
+            <div class="stats-grid">
+                <div class="stat">
+                    <span class="stat-number">1,200+</span>
+                    <span class="stat-label">Active Climbers</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">50+</span>
+                    <span class="stat-label">Clubs</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">100+</span>
+                    <span class="stat-label">Events</span>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<!-- Footer -->
-<footer>
-    <p>&copy; 2024 ClimbingGeeks by Kristiyan. All rights reserved.</p>
-</footer>
+
+<!-- JavaScript for form placeholders -->
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Set placeholders
+    var usernameField = document.getElementById('id_username');
+    var emailField = document.getElementById('id_email');
+    var password1Field = document.getElementById('id_password1');
+    var password2Field = document.getElementById('id_password2');
 
-    var form_fields = document.getElementsByTagName('input')
-    form_fields[1].placeholder = 'Username..';
-    form_fields[2].placeholder = 'Email..';
-    form_fields[3].placeholder = 'Enter password...';
-    form_fields[4].placeholder = 'Confirm password...';
+    if (usernameField) usernameField.placeholder = 'Choose a username';
+    if (emailField) emailField.placeholder = 'your.email@example.com';
+    if (password1Field) password1Field.placeholder = 'Create a strong password';
+    if (password2Field) password2Field.placeholder = 'Confirm your password';
 
-
-    for (var field in form_fields) {
-        form_fields[field].className += ' form-control'
-    }
+    // Add classes to form fields
+    var formFields = document.querySelectorAll('.register-form input');
+    formFields.forEach(function(field) {
+        field.classList.add('form-input');
+    });
+});
 </script>
-</body>
-
-</html>
+{% endblock %}

@@ -5,27 +5,102 @@
 {% endblock %}
 {% block content %}
     <main class="competition-detail-container">
+        <!-- Main Competition Content -->
         <div class="competition-detail-main">
+            <!-- Competition Header with Host Info -->
             <div class="competition-header">
-                <p class="owner-name">Hosted by: {{ competitions.club.title }}</p>
+                <div class="host-info">
+                    <div class="host-avatar">
+                        {{ competitions.club.title|first|upper }}
+                    </div>
+                    <div class="host-details">
+                        <p class="host-name">Hosted by: {{ competitions.club.title }}</p>
+                        <div class="competition-meta">
+                            <span class="meta-item">
+                                <i></i> {{ competitions.club.title }}
+                            </span>
+                            {% if competitions.location %}
+                            <span class="meta-item">
+                                <i>📍</i> {{ competitions.location }}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status Badge (calculate based on date) -->
+                {% now "Y-m-d" as today %}
+                {% if competitions.date|date:"Y-m-d" > today %}
+                <span class="status-badge">Upcoming</span>
+                {% elif competitions.date|date:"Y-m-d" == today %}
+                <span class="status-badge ongoing">Ongoing Today</span>
+                {% else %}
+                <span class="status-badge completed">Completed</span>
+                {% endif %}
             </div>
 
+            <!-- Competition Title -->
             <h1 class="competition-title">{{ competitions.title }}</h1>
 
+            <!-- Competition Image (if you add one) -->
+            <!--
+            <div class="competition-image-container">
+                <img src="{{ competitions.image_url }}" alt="{{ competitions.title }}" class="competition-image">
+            </div>
+            -->
+
+            <!-- Competition Content -->
             <div class="competition-content">
-                <p>{{ competitions.context }}</p>
+                {{ competitions.context|linebreaks }}
             </div>
 
-            <div class="competition-date">
-                <p>This competition will be held on: {{ competitions.date }}</p>
+            <!-- Competition Details Card -->
+            <div class="competition-details-card">
+                <div class="detail-item">
+                    <span class="detail-icon">📅</span>
+                    <span class="detail-label">Date</span>
+                    <span class="detail-value">{{ competitions.date|date:"F j, Y" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-icon">🏆</span>
+                    <span class="detail-label">Type</span>
+                    <span class="detail-value">{{ competitions.competition_type|default:"Open" }}</span>
+                </div>
             </div>
 
-            <form action="{% url 'add_competition' competitions.id %}" method="POST">
+            <!-- Competition Stats (Optional) -->
+            {% if competitions.max_participants or competitions.entry_fee %}
+            <div class="competition-stats">
+                {% if competitions.max_participants %}
+                <div class="stat-item">
+                    <span class="stat-number">{{ competitions.participants_count|default:"0" }}/{{ competitions.max_participants }}</span>
+                    <span class="stat-label">Spots Filled</span>
+                </div>
+                {% endif %}
+                {% if competitions.entry_fee %}
+                <div class="stat-item">
+                    <span class="stat-number">${{ competitions.entry_fee }}</span>
+                    <span class="stat-label">Entry Fee</span>
+                </div>
+                {% endif %}
+                <div class="stat-item">
+                    <span class="stat-number">{{ competitions.prize_pool|default:"$0" }}</span>
+                    <span class="stat-label">Prize Pool</span>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Join Form -->
+            <form action="{% url 'add_competition' competitions.id %}" method="POST" class="join-form">
                 {% csrf_token %}
-                <button type="submit" class="join-button">Add to my profile</button>
+                <button type="submit" class="join-button">
+                    <i>📋</i> Register for Competition
+                </button>
             </form>
+
         </div>
 
+        <!-- Related Competitions Sidebar -->
         <aside class="related-competition">
             <h2>Other Competitions</h2>
             <div class="related-competitions-list">
@@ -33,17 +108,27 @@
                     {% for related_competition in related_competitions %}
                         <div class="related-competition-card">
                             <h3 class="related-competition-title">{{ related_competition.title }}</h3>
-                            <a href="{% url 'competition_detail' related_competition.slug %}" class="read-more">View
-                                Competition</a>
+                            <div class="related-competition-meta">
+                                <span>📅 {{ related_competition.date|date:"M j, Y" }}</span>
+                                <span>•</span>
+                                <span>🏛️ {{ related_competition.club.title }}</span>
+                            </div>
+                            <a href="{% url 'competition_detail' related_competition.slug %}" class="read-more">
+                                View Competition
+                            </a>
                         </div>
                     {% endfor %}
                 {% else %}
-                    <p>No related competitions available.</p>
+                    <p class="no-related">No related competitions available.</p>
                 {% endif %}
             </div>
         </aside>
     </main>
 
+    <!-- Back to Top Button -->
+    <a href="#" class="back-to-top">↑</a>
+
+    <!-- Messages for SweetAlert -->
     {% if messages %}
         <ul id="messages" style="display: none;">
             {% for message in messages %}
@@ -51,26 +136,97 @@
             {% endfor %}
         </ul>
     {% endif %}
-    <head>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    </head>
 
+    <!-- SweetAlert Script -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const messages = document.querySelectorAll("#messages li");
-            messages.forEach((message) => {
-                Swal.fire({
-                    icon: message.classList.contains("alert-success") ? "success" :
-                        message.classList.contains("alert-info") ? "info" :
-                            "error",
-                    title: message.textContent,
-                    toast: true,
-                    position: "top-end",
-                    timer: 3000,
-                    showConfirmButton: false
-                });
+    document.addEventListener("DOMContentLoaded", function () {
+        // Back to Top Button
+        const backToTopBtn = document.querySelector('.back-to-top');
+
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+        });
+
+        backToTopBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
             });
         });
-    </script>
 
+        // SweetAlert Messages
+        const messages = document.querySelectorAll("#messages li");
+        messages.forEach((message) => {
+            Swal.fire({
+                icon: message.classList.contains("alert-success") ? "success" :
+                      message.classList.contains("alert-info") ? "info" :
+                      message.classList.contains("alert-error") ? "error" : "info",
+                title: message.textContent,
+                toast: true,
+                position: "top-end",
+                timer: 3000,
+                showConfirmButton: false,
+                background: 'white',
+                iconColor: message.classList.contains("alert-success") ? '#4b6cb7' : undefined
+            });
+        });
+
+        // Join Button Loading State
+        const joinForm = document.querySelector('.join-form');
+        if (joinForm) {
+            joinForm.addEventListener('submit', function(e) {
+                const button = this.querySelector('.join-button');
+                const originalText = button.innerHTML;
+
+                // Show loading state
+                button.innerHTML = '<i>⏳</i> Registering...';
+                button.style.opacity = '0.8';
+                button.disabled = true;
+
+                // Re-enable after 2 seconds if form doesn't submit
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.style.opacity = '1';
+                    button.disabled = false;
+                }, 2000);
+            });
+        }
+
+        // Dynamic status badge based on date
+        const competitionDate = new Date("{{ competitions.date|date:'Y-m-d' }}");
+        const today = new Date();
+        const statusBadge = document.querySelector('.status-badge');
+
+        if (statusBadge) {
+            if (competitionDate.toDateString() === today.toDateString()) {
+                statusBadge.className = 'status-badge ongoing';
+                statusBadge.textContent = 'Ongoing Today';
+            } else if (competitionDate < today) {
+                statusBadge.className = 'status-badge completed';
+                statusBadge.textContent = 'Completed';
+            }
+        }
+
+        // Hover effects for competition image (if exists)
+        const competitionImage = document.querySelector('.competition-image');
+        if (competitionImage) {
+            const container = competitionImage.closest('.competition-image-container');
+            if (container) {
+                container.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                });
+
+                container.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            }
+        }
+    });
+    </script>
 {% endblock %}

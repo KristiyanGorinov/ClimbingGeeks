@@ -5,45 +5,83 @@
 {% endblock %}
 {% block content %}
     <main class="club-detail-container">
+        <!-- Main Club Content -->
         <div class="club-detail-main">
+            <!-- Club Header with Owner Info -->
             <div class="club-header">
-                <p class="owner-name">{{ club.owner }}</p>
+                <div class="owner-info">
+                    <div class="owner-avatar">
+                        {{ club.owner|first|upper }}
+                    </div>
+                    <div class="owner-details">
+                        <p class="owner-name">{{ club.owner }}</p>
+                        <div class="club-meta">
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
+            <!-- Club Title -->
             <h1 class="club-title">{{ club.title }}</h1>
 
-            <img src="{{ club.image }}" alt="{{ club.title }}" class="club-image">
-
-            <div class="club-content">
-                <p>{{ club.content }}</p>
+            <!-- Club Image -->
+            <div class="club-image-container">
+                <img src="{{ club.image }}" alt="{{ club.title }}" class="club-image">
             </div>
 
-            <form action="{% url 'join_club' club.id %}" method="POST">
+            <!-- Club Content -->
+            <div class="club-content">
+                {{ club.content|linebreaks }}
+            </div>
+
+            <!-- Join Form -->
+            <form action="{% url 'join_club' club.id %}" method="POST" class="join-form">
                 {% csrf_token %}
-                <button type="submit" class="join-button">Join Club</button>
+                <button type="submit" class="join-button">
+                    <i>👥</i> Join This Club
+                </button>
             </form>
+
+            <!-- Edit/Delete Actions for Club Owner -->
+            {% if club.owner == request.user %}
+            <div class="club-actions">
+                <a href="{% url 'edit_club' club.slug %}" class="edit-btn">Edit Club</a>
+                <a href="{% url 'delete_club' club.slug %}" class="delete-btn">Delete Club</a>
+            </div>
+            {% endif %}
         </div>
 
+        <!-- Related Clubs Sidebar -->
         <aside class="related-clubs">
-            <h2>Other Clubs</h2>
+            <h2>Similar Clubs</h2>
             <div class="related-club-list">
                 {% if related_clubs %}
                     {% for related_club in related_clubs %}
                         <div class="related-club-card">
                             <h3 class="related-club-title">{{ related_club.title }}</h3>
                             {% if related_club.image %}
-                                <img src="{{ related_club.image }}" alt="{{ related_club.title }}" class="club-image">
+                                <img src="{{ related_club.image }}" alt="{{ related_club.title }}" class="related-club-image">
                             {% endif %}
+                            <div class="related-club-meta">
+                                <span>👥 {{ related_club.members_count|default:"0" }} members</span>
+                                <span>•</span>
+                                <span>📅 {{ related_club.created_at|date:"Y" }}</span>
+                            </div>
                             <a href="{% url 'club_detail' related_club.slug %}" class="read-more">View Club</a>
                         </div>
                     {% endfor %}
                 {% else %}
-                    <p>No related clubs available.</p>
+                    <p class="no-related">No similar clubs available.</p>
                 {% endif %}
             </div>
         </aside>
     </main>
 
+    <!-- Back to Top Button -->
+    <a href="#" class="back-to-top">↑</a>
+
+    <!-- Messages for SweetAlert -->
     {% if messages %}
         <ul id="messages" style="display: none;">
             {% for message in messages %}
@@ -51,27 +89,82 @@
             {% endfor %}
         </ul>
     {% endif %}
-    <head>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    </head>
-    
+
+    <!-- SweetAlert Script -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
     document.addEventListener("DOMContentLoaded", function () {
+        // Back to Top Button
+        const backToTopBtn = document.querySelector('.back-to-top');
+
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+        });
+
+        backToTopBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // SweetAlert Messages
         const messages = document.querySelectorAll("#messages li");
         messages.forEach((message) => {
             Swal.fire({
-                icon: message.classList.contains("alert-success") ? "success" : 
-                      message.classList.contains("alert-info") ? "info" : 
-                      "error",
+                icon: message.classList.contains("alert-success") ? "success" :
+                      message.classList.contains("alert-info") ? "info" :
+                      message.classList.contains("alert-error") ? "error" : "info",
                 title: message.textContent,
                 toast: true,
                 position: "top-end",
                 timer: 3000,
-                showConfirmButton: false
+                showConfirmButton: false,
+                background: 'white',
+                iconColor: message.classList.contains("alert-success") ? '#9c27b0' : undefined
             });
         });
+
+        // Join Button Loading State
+        const joinForm = document.querySelector('.join-form');
+        if (joinForm) {
+            joinForm.addEventListener('submit', function(e) {
+                const button = this.querySelector('.join-button');
+                const originalText = button.innerHTML;
+
+                // Show loading state
+                button.innerHTML = '<i>⏳</i> Joining...';
+                button.style.opacity = '0.8';
+                button.disabled = true;
+
+                // Re-enable after 2 seconds if form doesn't submit
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.style.opacity = '1';
+                    button.disabled = false;
+                }, 2000);
+            });
+        }
+
+        // Hover effects for club image
+        const clubImage = document.querySelector('.club-image');
+        if (clubImage) {
+            const container = clubImage.closest('.club-image-container');
+            if (container) {
+                container.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                });
+
+                container.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            }
+        }
     });
-</script>
-
-
+    </script>
 {% endblock %}

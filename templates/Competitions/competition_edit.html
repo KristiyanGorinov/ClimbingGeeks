@@ -5,16 +5,121 @@
 {% endblock %}
 {% block content %}
     <main>
-        <section id="create">
-            <div class="form">
+        <div class="form-container">
+            <div class="form-header">
                 <h2>Edit Competition</h2>
+                <p>Update your competition details</p>
+            </div>
 
-                <form class="create-form" action="" method="post">
-                    {{ form }}
+            <div class="form-content">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="success-message">
+                            <i>✓</i> {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form class="edit-form" action="" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <button type="submit">Publish</button>
+
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">
+                                {% if field.name == 'date' or field.name == 'start_date' %}
+                                    <i>📅</i>
+                                {% elif field.name == 'end_date' %}
+                                    <i>🏁</i>
+                                {% elif field.name == 'registration_deadline' %}
+                                    <i>⏰</i>
+                                {% elif field.name == 'time' or field.name == 'start_time' %}
+                                    <i>⏱️</i>
+                                {% else %}
+                                    <i>🏆</i>
+                                {% endif %}
+                                {{ field.label }}
+                            </label>
+
+                            {% if field.name == 'date' or field.name == 'start_date' or field.name == 'end_date' or field.name == 'registration_deadline' %}
+                                <div class="date-input-wrapper">
+                                    {{ field }}
+                                </div>
+                            {% elif field.name == 'time' or field.name == 'start_time' %}
+                                <div class="time-wrapper">
+                                    {{ field }}
+                                </div>
+                            {% elif field.name == 'datetime' or field.name == 'start_datetime' %}
+                                <div class="datetime-wrapper">
+                                    {{ field }}
+                                </div>
+                            {% else %}
+                                {{ field }}
+                            {% endif %}
+
+                            {% if field.help_text %}
+                                <span class="helptext">{{ field.help_text }}</span>
+                            {% endif %}
+                            {% if field.errors %}
+                                <ul class="errorlist">
+                                    {% for error in field.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">
+                            <i>💾</i> Save Changes
+                        </button>
+                        <a href="javascript:history.back()" class="btn-secondary">
+                            <i>✖</i> Cancel
+                        </a>
+                    </div>
                 </form>
             </div>
-        </section>
+        </div>
+
+        <!-- Back to Top Button -->
+        <button class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
     </main>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Back to Top Button visibility
+        const backToTop = document.querySelector('.back-to-top');
+
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        // Form submission loading state
+        const form = document.querySelector('form');
+        const submitBtn = document.querySelector('.btn-primary');
+
+        if (form && submitBtn) {
+            form.addEventListener('submit', function(e) {
+                submitBtn.classList.add('loading');
+                submitBtn.disabled = true;
+            });
+        }
+
+        // Auto-resize textareas
+        const textareas = document.querySelectorAll('textarea');
+        textareas.forEach(textarea => {
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+
+            // Trigger once to set initial height
+            textarea.dispatchEvent(new Event('input'));
+        });
+    });
+    </script>
 {% endblock %}

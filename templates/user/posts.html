@@ -6,31 +6,156 @@
 {% endblock %}
 {% block content %}
     <main>
-
-        <div class="add-post-button-container">
-            <a href="{% url 'create_post' %}" class="add-post-button">Add Post</a>
-        </div>
-
-        <div class="posts-container">
-            {% for post in posts %}
-                <div class="post-card">
-                    <div class="post-header">
-                        <img src="{% static 'images/pfp.jpg' %}" alt="Author Image" class="author-image">
-                        <p class="author-name">{{ post.user.username }}</p>
-                    </div>
-                    <h3 class="post-title">{{ post.title }}</h3>
-                    {% if post.image_url %}
-                        <img src="{{ post.image_url }}" alt="{{ post.title }}" class="post-image">
-                    {% endif %}
-                    <p class="post-description">{{ post.content|truncatewords:20 }}</p>
-                    <a href="{% url 'post_detail' post.slug %}" class="read-more">Read More</a>
-                    <div></div>
-                    {% if post.user.user == request.user %}
-                        <a href="{% url 'edit_post' post.slug %}" class="edit-post-button">Edit Post</a>
-                        <a href="{% url 'delete_post' post.slug %}" class="delete-post-button">Delete Post</a>
-                    {% endif %}
+        <!-- Hero Section with Search -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">Climbing Community Hub</h1>
+                <p class="hero-subtitle">Share your climbing adventures, connect with fellow climbers, and discover new routes</p>
+                <div class="hero-search-container">
+                    <input type="text" class="search-bar" placeholder="Search for climbing posts, tips, or users...">
                 </div>
-            {% endfor %}
-        </div>
+            </div>
+        </section>
+
+        <!-- Posts Section -->
+        <section class="posts-section">
+            {% if posts %}
+                <!-- Add Post Button -->
+                <div class="add-post-button-container">
+                    <a href="{% url 'create_post' %}" class="add-post-button">
+                        <span>+</span> Share Your Climbing Experience
+                    </a>
+                </div>
+
+                <!-- Posts Grid -->
+                <div class="posts-container">
+                    {% for post in posts %}
+                        <div class="post-card">
+                            <!-- Post Header with Author Info -->
+                            <div class="post-header">
+                                <img src="{% static 'images/pfp.jpg' %}" alt="{{ post.user.username }}" class="author-image">
+                                <div class="author-info">
+                                    <p class="author-name">{{ post.user.username }}</p>
+                                    <span class="author-badge">Climber</span>
+                                </div>
+                            </div>
+
+                            <!-- Post Title -->
+                            <h3 class="post-title">{{ post.title }}</h3>
+
+                            <!-- Post Image -->
+                            {% if post.image_url %}
+                            <div class="post-image-container">
+                                <img src="{{ post.image_url }}" alt="{{ post.title }}" class="post-image">
+                                <div class="image-overlay"></div>
+                            </div>
+                            {% endif %}
+
+                            <!-- Post Content Preview -->
+                            <p class="post-description">{{ post.content|truncatewords:40 }}</p>
+
+                            <!-- Post Actions -->
+                            <div class="post-actions">
+                                <a href="{% url 'post_detail' post.slug %}" class="read-more">
+                                    <span>→</span> Read Full Story
+                                </a>
+
+                                {% if post.user.user == request.user %}
+                                <div class="post-edit-delete">
+                                    <a href="{% url 'edit_post' post.slug %}" class="edit-post-button">Edit</a>
+                                    <a href="{% url 'delete_post' post.slug %}" class="delete-post-button">Delete</a>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <!-- Empty State -->
+                <div class="empty-state">
+                    <h3>No climbing posts yet</h3>
+                    <p>Be the first to share your climbing adventure! Connect with fellow climbers by posting about your favorite routes, tips, or experiences.</p>
+                    <div style="margin-top: 30px;">
+                        <a href="{% url 'create_post' %}" class="add-post-button">
+                            <span>+</span> Create First Post
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </section>
+
+        <!-- Floating Add Button for Mobile -->
+        <a href="{% url 'create_post' %}" class="floating-add-button">+</a>
     </main>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Search functionality
+        const searchBar = document.querySelector('.search-bar');
+        const postCards = document.querySelectorAll('.post-card');
+
+        // Search function
+        if (searchBar) {
+            searchBar.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase().trim();
+
+                // Add loading effect
+                postCards.forEach(card => {
+                    card.style.opacity = '0.6';
+                    card.style.transform = 'scale(0.98)';
+                });
+
+                setTimeout(() => {
+                    postCards.forEach(card => {
+                        const title = card.querySelector('.post-title').textContent.toLowerCase();
+                        const description = card.querySelector('.post-description').textContent.toLowerCase();
+                        const author = card.querySelector('.author-name').textContent.toLowerCase();
+
+                        if (searchTerm === '' ||
+                            title.includes(searchTerm) ||
+                            description.includes(searchTerm) ||
+                            author.includes(searchTerm)) {
+                            card.style.display = 'flex';
+                            card.style.opacity = '1';
+                            card.style.transform = 'scale(1)';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                }, 200);
+            });
+
+            // Add search icon functionality
+            searchBar.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+
+            searchBar.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        }
+
+        // Add smooth hover effects for cards
+        postCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.zIndex = '10';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.zIndex = '1';
+            });
+        });
+
+        // Add parallax effect to hero section
+        window.addEventListener('scroll', function() {
+            const hero = document.querySelector('.hero-section');
+            const scrolled = window.pageYOffset;
+            const rate = scrolled * -0.5;
+
+            if (hero) {
+                hero.style.transform = `translate3d(0, ${rate}px, 0)`;
+            }
+        });
+    });
+    </script>
 {% endblock %}

@@ -6,32 +6,167 @@
 {% endblock %}
 {% block content %}
     <main>
-        {% if request.user.is_staff or request.user.is_superuser or request.user|in_group:"staff" %}
-            <div class="add-club-button-container">
-                <a href="{% url 'create_club' %}" class="add-club-button">Add Club</a>
+        <!-- Hero Section with Search -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">Climbing Clubs</h1>
+                <p class="hero-subtitle">Find and join climbing clubs, connect with local climbers, and share your passion</p>
+                <div class="hero-search-container">
+                    <input type="text" class="search-bar" placeholder="Search for clubs, locations, or activities...">
+                </div>
             </div>
-        {% endif %}
-        <div class="club-container">
-            {% for club in clubs %}
-                <div class="club-card">
-                    <div class="club-header">
-                        <div class="club-image">
-                            <img src="{{ club.image }}" alt="{{ club.title }}">
+        </section>
+
+        <!-- Clubs Section -->
+        <section class="clubs-section">
+            {% if clubs %}
+                <!-- Add Club Button (Admin only) -->
+                {% if request.user.is_staff or request.user.is_superuser or request.user|in_group:"staff" %}
+                <div class="add-club-button-container">
+                    <a href="{% url 'create_club' %}" class="add-club-button">
+                        <span>+</span> Create New Club
+                    </a>
+                </div>
+                {% endif %}
+
+                <!-- Clubs Grid -->
+                <div class="clubs-container">
+                    {% for club in clubs %}
+                        <div class="club-card">
+                            <!-- Club Image -->
+                            <div class="club-header">
+                                <div class="club-image">
+                                    <img src="{{ club.image }}" alt="{{ club.title }}">
+                                </div>
+                                <h3 class="club-title">{{ club.title }}</h3>
+                            </div>
+
+                            <!-- Club Content -->
+                            <p class="club-content">{{ club.content|truncatewords:40 }}</p>
+
+                            <!-- Optional: Club Stats (if you have them) -->
+                            <!--
+                            <div class="club-stats">
+                                <div class="stat-item">
+                                    <span class="stat-number">42</span>
+                                    <span class="stat-label">Members</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">15</span>
+                                    <span class="stat-label">Events</span>
+                                </div>
+                            </div>
+                            -->
+
+                            <!-- Club Actions -->
+                            <div class="club-actions">
+                                <a href="{% url 'club_detail' club.slug %}" class="club-button">
+                                    Explore Club
+                                </a>
+
+                                <!-- Owner Actions -->
+                                {% if club.user.user == request.user %}
+                                <div class="owner-actions">
+                                    <a href="{% url 'edit_club' club.slug %}" class="club-button-edit">
+                                        Edit
+                                    </a>
+                                    <a href="{% url 'delete_club' club.slug %}" class="club-button-delete">
+                                        Delete
+                                    </a>
+                                </div>
+                                {% endif %}
+                            </div>
                         </div>
-
-                        <h3 class="club-title">{{ club.title }}</h3>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <!-- Empty State -->
+                <div class="empty-state">
+                    <h3>No climbing clubs yet</h3>
+                    <p>Be the first to start a climbing club and bring climbers together in your community!</p>
+                    {% if request.user.is_staff or request.user.is_superuser or request.user|in_group:"staff" %}
+                    <div style="margin-top: 30px;">
+                        <a href="{% url 'create_club' %}" class="add-club-button">
+                            <span>+</span> Create First Club
+                        </a>
                     </div>
-
-                    <p class="club-content">{{ club.content|truncatewords:20 }}</p>
-
-
-                    <a href="{% url 'club_detail' club.slug %}" class="club-button">View Club</a>
-                    {% if club.user.user == request.user %}
-                        <a href="{% url 'edit_club' club.slug %}" class="club-button-edit">Edit Club</a>
-                        <a href="{% url 'delete_club' club.slug %}" class="club-button-delete">Delete Club</a>
                     {% endif %}
                 </div>
-            {% endfor %}
-        </div>
+            {% endif %}
+        </section>
+
+        <!-- Floating Add Button for Mobile (Admin only) -->
+        {% if request.user.is_staff or request.user.is_superuser or request.user|in_group:"staff" %}
+        <a href="{% url 'create_club' %}" class="floating-add-button">+</a>
+        {% endif %}
     </main>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Search functionality
+        const searchBar = document.querySelector('.search-bar');
+        const clubCards = document.querySelectorAll('.club-card');
+
+        // Search function
+        if (searchBar) {
+            searchBar.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase().trim();
+
+                // Add loading effect
+                clubCards.forEach(card => {
+                    card.style.opacity = '0.6';
+                    card.style.transform = 'scale(0.98)';
+                });
+
+                setTimeout(() => {
+                    clubCards.forEach(card => {
+                        const title = card.querySelector('.club-title').textContent.toLowerCase();
+                        const content = card.querySelector('.club-content').textContent.toLowerCase();
+
+                        if (searchTerm === '' ||
+                            title.includes(searchTerm) ||
+                            content.includes(searchTerm)) {
+                            card.style.display = 'flex';
+                            card.style.opacity = '1';
+                            card.style.transform = 'scale(1)';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                }, 200);
+            });
+
+            // Add search icon functionality
+            searchBar.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+
+            searchBar.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        }
+
+        // Add smooth hover effects for cards
+        clubCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.zIndex = '10';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.zIndex = '1';
+            });
+        });
+
+        // Add parallax effect to hero section
+        window.addEventListener('scroll', function() {
+            const hero = document.querySelector('.hero-section');
+            const scrolled = window.pageYOffset;
+            const rate = scrolled * -0.5;
+
+            if (hero) {
+                hero.style.transform = `translate3d(0, ${rate}px, 0)`;
+            }
+        });
+    });
+    </script>
 {% endblock %}

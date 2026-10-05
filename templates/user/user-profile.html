@@ -4,133 +4,247 @@
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'styles/profile.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
-          integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA=="
-          crossorigin="anonymous"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
     <main>
         <div class="container">
-            <div class="profile">
+            <div class="profile-card">
                 <div class="profile-header">
-                    <img src="{% static 'images/pfp.jpg' %}" alt="profile" class="profile-img">
-                    <div class="profile-text-container">
-                        <h1 class="profile-title"> {{ request.user.username }}</h1>
-                        <p class="profile-email"> {{ request.user.email }}</p>
+                    <div class="avatar-container">
+                        <img src="{% static 'images/pfp.jpg' %}" alt="profile" class="profile-img">
+                        {% if request.user.is_staff or request.user.is_superuser %}
+                            <span class="badge staff-badge">
+                                <i class="fas fa-crown"></i> Staff
+                            </span>
+                        {% endif %}
+                    </div>
+                    <div class="profile-info">
+                        <h1 class="profile-username">@{{ request.user.username }}</h1>
+                        <p class="profile-email">
+                            <i class="fas fa-envelope"></i> {{ request.user.email }}
+                        </p>
+                        <p class="profile-joined">
+                            <i class="fas fa-calendar-alt"></i> Member since {{ request.user.date_joined|date:"M Y" }}
+                        </p>
                     </div>
                 </div>
-                <div class="menu">
-                    <a href="" class="menu-link"><i class="fa-solid fa-circle-user menu-icon"></i>Account</a>
-                    <a href="{% url 'logout' %}" class="menu-link"><i
-                            class="fa-solid fa-right-from-bracket menu-icon"></i>Logout</a>
+                <div class="profile-nav">
+                    <a href="#" class="nav-item active">
+                        <i class="fas fa-user-cog"></i>
+                        <span>Account Settings</span>
+                    </a>
+                    <a href="{% url 'logout' %}" class="nav-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
                 </div>
             </div>
 
             <!-- Profile Update Form -->
-            <form class="account" method="POST" action="">
+            <form class="account-form" method="POST" action="">
                 {% csrf_token %}
-                <div class="account-header">
-                    <h1 class="account-title">Account Settings</h1>
-                    <div class="btn-container">
-                        <button type="submit" class="btn-save">Save</button>
-                    </div>
+                <div class="form-header">
+                    <h2 class="form-title">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </h2>
+                    <button type="submit" class="btn-save">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
                 </div>
 
-                <div class="account-edit">
-                    <div class="input-container">
-                        <label>First Name</label>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-user"></i> First Name
+                        </label>
                         <input type="text" name="first_name"
                                value="{{ form.first_name.value|default_if_none:request.user.first_name }}"
-                               placeholder="First Name">
+                               class="form-input"
+                               placeholder="Enter your first name">
                     </div>
-                    <div class="input-container">
-                        <label>Last Name</label>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-user"></i> Last Name
+                        </label>
                         <input type="text" name="last_name"
                                value="{{ form.last_name.value|default_if_none:request.user.last_name }}"
-                               placeholder="Last Name">
+                               class="form-input"
+                               placeholder="Enter your last name">
                     </div>
-                </div>
-
-                <div class="account-edit">
-                    <div class="input-container">
-                        <label>Email</label>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-envelope"></i> Email
+                        </label>
                         <input type="email" name="email"
-                               value="{{ form.email.value|default_if_none:request.user.email }}" placeholder="Email">
+                               value="{{ form.email.value|default_if_none:request.user.email }}"
+                               class="form-input"
+                               placeholder="Enter your email">
                     </div>
-                    <div class="input-container">
-                        <label>Phone</label>
-                        <input type="text" name="phone" value="{{ profile.phone }}" placeholder="Phone">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-phone"></i> Phone
+                        </label>
+                        <input type="text" name="phone"
+                               value="{{ profile.phone }}"
+                               class="form-input"
+                               placeholder="Enter your phone number">
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">
+                            <i class="fas fa-info-circle"></i> About Me
+                        </label>
+                        <textarea name="info"
+                                  class="form-textarea"
+                                  placeholder="Tell us something about yourself...">{{ profile.info }}</textarea>
+                        <small class="form-hint">Share your interests, skills, or anything you'd like others to know!</small>
                     </div>
                 </div>
 
-                <div class="account-edit">
-                    <div class="input-container">
-                        <label>Info</label>
-                        <textarea name="info" placeholder="Info">{{ profile.info }}</textarea>
-                    </div>
-                </div>
-
-                <div>
+                {% if messages %}
+                <div class="messages-container">
                     {% for message in messages %}
-                        <p id="messages">{{ message }}</p>
+                        <div class="message message-{{ message.tags }}">
+                            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
+                            {{ message }}
+                        </div>
                     {% endfor %}
                 </div>
+                {% endif %}
             </form>
-
-
         </div>
-        <div class="content-layout">
-            <!-- Leave Club Form -->
-            <div class="leave-club-container">
-                <h2>Current Club</h2>
-                {% if user_clubs %}
-                    <ul>
+
+        <div class="dashboard-cards">
+            <!-- Current Club Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-users"></i> My Club
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {% if user_clubs %}
                         {% for club in user_clubs %}
-                            <li>
-                                {{ club.title }}
-                                <form method="POST" action="{% url 'leave_club' %}">
+                            <div class="club-item">
+                                <div class="club-info">
+                                    <h4 class="club-name">{{ club.title }}</h4>
+                                    <p class="club-meta">
+                                        <i class="fas fa-map-marker-alt"></i> {{ club.location|default:"No location" }}
+                                    </p>
+                                </div>
+                                <form method="POST" action="{% url 'leave_club' %}" class="club-actions">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn-leave">Leave Club</button>
+                                    <button type="submit" class="btn-action btn-leave"
+                                            onclick="return confirm('Are you sure you want to leave {{ club.title }}?');">
+                                        <i class="fas fa-sign-out-alt"></i> Leave
+                                    </button>
                                 </form>
-                            </li>
+                            </div>
                         {% endfor %}
-                    </ul>
-                {% else %}
-                    <p>You are not a member of any club.</p>
-                {% endif %}
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-users-slash"></i>
+                            <p>You're not a member of any club</p>
+                            <a href="{% url 'clubs' %}" class="btn-action btn-primary">
+                                <i class="fas fa-search"></i> Browse Clubs
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
 
-            <!-- Competitions Container -->
-            <div class="competitions-container">
-                <h2>My Competitions</h2>
-                {% if user_competitions %}
-                    <ul>
+            <!-- Competitions Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-trophy"></i> My Competitions
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {% if user_competitions %}
                         {% for comp in user_competitions %}
-                            <li>
-                                {{ comp.title }}
-                                <a href="{% url 'register-competition' comp.slug %}" class="Register-btn">Register</a>
-                            </li>
+                            <div class="competition-item">
+                                <div class="competition-info">
+                                    <h4 class="competition-name">{{ comp.title }}</h4>
+                                    <p class="competition-date">
+                                        <i class="fas fa-calendar"></i>
+                                        {{ comp.date|date:"M d, Y"|default:"Date not set" }}
+                                    </p>
+                                </div>
+                                <a href="{% url 'register-competition' comp.slug %}" class="btn-action btn-register">
+                                    <i class="fas fa-clipboard-check"></i> Register
+                                </a>
+                            </div>
                         {% endfor %}
-                    </ul>
-                {% else %}
-                    <p>You haven't added any competitions yet</p>
-                {% endif %}
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-trophy"></i>
+                            <p>No competitions added yet</p>
+                            <a href="{% url 'competitions' %}" class="btn-action btn-primary">
+                                <i class="fas fa-plus"></i> Explore Competitions
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
 
-            <!-- Become Staff -->
-            <div class="Staff-container">
-                <h2>Become Staff</h2>
-                {% if request.user.is_staff or request.user.is_superuser %}
-                    <p>You are already a staff!</p>
-                {% else %}
-                    <p>Enter staff key:</p>
-                    <form method="POST" action="{% url 'become_staff' %}">
-                        {% csrf_token %}
-                        <textarea name="staff_key" placeholder="Enter staff key here..." required></textarea>
-                        <button type="submit" class="btn-staff">Become Staff</button>
-                    </form>
-                {% endif %}
+            <!-- Staff Upgrade Card -->
+            <div class="card staff-card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-user-shield"></i> Staff Access
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {% if request.user.is_staff or request.user.is_superuser %}
+                        <div class="staff-status">
+                            <p class="staff-description">
+                                You have access to staff features and admin panels. Thank you for your contribution!
+                            </p>
+                            <div class="staff-features">
+                                <span class="feature-tag">
+                                    <i class="fas fa-check"></i> Content Management
+                                </span>
+                                <span class="feature-tag">
+                                    <i class="fas fa-check"></i> User Moderation
+                                </span>
+                                <span class="feature-tag">
+                                    <i class="fas fa-check"></i> Club Administration
+                                </span>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="staff-upgrade">
+                            <div class="upgrade-icon">
+                                <i class="fas fa-lock-open"></i>
+                            </div>
+                            <h4 class="upgrade-title">Unlock Staff Features</h4>
+                            <p class="upgrade-description">
+                                Enter the staff key to gain access to moderation tools and administrative features.
+                            </p>
+                            <form method="POST" action="{% url 'become_staff' %}" class="staff-form">
+                                {% csrf_token %}
+                                <div class="input-group">
+                                    <input type="text"
+                                           name="staff_key"
+                                           class="form-input staff-key-input"
+                                           placeholder="Enter staff key..."
+                                           required>
+                                    <button type="submit" class="btn-action btn-staff">
+                                        <i class="fas fa-unlock"></i> Activate
+                                    </button>
+                                </div>
+                            </form>
+                            <small class="form-hint">
+                                <i class="fas fa-lightbulb"></i>
+                                For presentation purposes, use: <code>STAFF123</code>
+                            </small>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </main>

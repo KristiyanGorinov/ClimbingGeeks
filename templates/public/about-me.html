@@ -3,63 +3,124 @@
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'styles/about.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
-          integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA=="
-          crossorigin="anonymous"/>
 {% endblock %}
 
 {% block content %}
-    <div class="about-wrapper">
-        <div class="about-left">
-            <div class="about-left-content">
-                <div>
-                    <div class="shadow">
-                        <div class="about-img">
-                            <img src="{% static 'images/pfp.png' %}" alt="about image">
-                        </div>
+<div class="about-container">
+    <!-- Hero Section -->
+    <section class="about-hero">
+        <h1>About Me</h1>
+        <p class="subtitle">Get to know the developer behind ClimbingGeeks</p>
+    </section>
+
+    <!-- Profile Section -->
+    <section class="profile-section">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <img src="{% static 'images/pfp.png' %}" alt="Kristiyan Gorinov">
+            </div>
+            <h2>Kristiyan Gorinov</h2>
+            <p class="profile-title">Software Developer & Climbing Enthusiast</p>
+        </div>
+
+        <div class="profile-info">
+            <div class="about-text">
+                <h3>Hello! 👋</h3>
+                <p>My name is Kristiyan and I'm currently a student pursuing my passion for technology and outdoor adventures. When I'm not coding, you'll likely find me climbing at the local gym or exploring new bouldering spots.</p>
+                <p>As you can probably tell from this website, I have two main passions: climbing and programming. These might seem like completely different worlds, but both require problem-solving, persistence, and creativity.</p>
+                <p>My journey into web development started with a desire to combine these interests and create something meaningful for the climbing community.</p>
+            </div>
+
+            <div class="skills-section">
+                <h3>Skills & Interests</h3>
+                <div class="skills-grid">
+                    <div class="skill-item">
+                        <div class="skill-icon">🧗</div>
+                        <span>Rock Climbing</span>
                     </div>
-
-                    <h2>Kristiyan<br>Gorinov</h2>
-                    <h3>Software Developer</h3>
+                    <div class="skill-item">
+                        <div class="skill-icon">💻</div>
+                        <span>Web Development</span>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-icon">🐍</div>
+                        <span>Python/Django</span>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-icon">🎨</div>
+                        <span>UI/UX Design</span>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-icon">🎮</div>
+                        <span>Gaming</span>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-icon">🏊</div>
+                        <span>Swimming</span>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-icon">📖</div>
+                        <span>Reading</span>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-icon">🎸</div>
+                        <span>Playing the Guitar</span>
+                    </div>
                 </div>
-
-                <ul class="icons">
-                    <li>
-                        <a href="https://www.facebook.com/kris.gorinov/?locale=bg_BG" target="_blank">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://www.instagram.com/_.k.gorinow._/" target="_blank">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                    </li>
-                </ul>
             </div>
         </div>
+    </section>
 
-        <div class="about-right">
-            <h1>hi<span>!</span></h1>
-            <h2>Here's who I am & what I do</h2>
-            {% if not request.user.is_authenticated %}
-                <div class="about-btns">
-                    <a href="{% url 'login' %}">
-                        <button type="button" class="btn btn-green">Log in</button>
-                    </a>
-
-                    <a href="{% url 'register' %}">
-                        <button type="button" class="btn btn-white">Register</button>
-                    </a>
-                </div>
-            {% endif %}
-
-            <div class="about-para">
-                <p>My name is Kristiyan and currently a student. As you can probably tell from the website I enjoy
-                    climbing. Another passion of mine is programming and am currently studying django!</p>
-                <p>This is my first ever django project. A climbing website in which you can join clubs, view upcoming
-                    competitions comment with other users and other fun functions for you to explore. Create an account
-                    and see for yourself!</p>
-            </div>
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="stat-card">
+            <div class="stat-number">1st</div>
+            <div class="stat-label">Django Project</div>
         </div>
-    </div>
+        <div class="stat-card">
+            <div class="stat-number">2</div>
+            <div class="stat-label">Passions Combined</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Climbing Enthusiasm</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">∞</div>
+            <div class="stat-label">Learning Spirit</div>
+        </div>
+    </section>
+
+    <!-- About the Project -->
+    <section class="about-text">
+        <h3>About This Project</h3>
+        <p>ClimbingGeeks represents my first major Django project - a platform where two of my passions converge. This website is designed to be a hub for climbing enthusiasts where you can:</p>
+        <ul style="margin: 1.5rem 0; padding-left: 1.5rem; color: #4b5563;">
+            <li style="margin-bottom: 0.5rem;">Join and create climbing clubs</li>
+            <li style="margin-bottom: 0.5rem;">Discover upcoming competitions</li>
+            <li style="margin-bottom: 0.5rem;">Connect with fellow climbers</li>
+            <li style="margin-bottom: 0.5rem;">Share experiences and tips</li>
+            <li>Track your climbing progress</li>
+        </ul>
+        <p>As a beginner in Django, this project has been an incredible learning experience. Every feature, from user authentication to database design, has been a step forward in my web development journey.</p>
+    </section>
+
+    <!-- CTA Section -->
+    {% if not request.user.is_authenticated %}
+    <section class="cta-section">
+        <h2>Ready to Join the Community?</h2>
+        <p>Create your free account today and start connecting with climbers, joining events, and sharing your climbing adventures!</p>
+        <div class="cta-buttons">
+            <a href="{% url 'register' %}" class="cta-button primary">
+                <i class="fas fa-user-plus"></i>
+                <span>Create Free Account</span>
+            </a>
+            <a href="{% url 'login' %}" class="cta-button secondary">
+                <i class="fas fa-sign-in-alt"></i>
+                <span>Login to Account</span>
+            </a>
+        </div>
+    </section>
+    {% endif %}
+</div>
 {% endblock %}

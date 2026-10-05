@@ -5,16 +5,124 @@
 {% endblock %}
 {% block content %}
     <main>
-        <section id="create">
-            <div class="form">
+        <div class="form-container delete-container">
+            <div class="form-header">
                 <h2>Delete Competition</h2>
+                <p>This action cannot be undone</p>
+            </div>
 
-                <form class="create-form" action="" method="post">
-                    {{ form }}
+            <div class="form-content">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="success-message">
+                            <i>✓</i> {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <div class="delete-warning">
+                    <i>⚠️</i>
+                    <h3>Are you absolutely sure?</h3>
+                    <p>You are about to permanently delete this competition. This will remove all registrations and associated data. This action cannot be reversed.</p>
+
+                    <!-- Competition Preview -->
+                    {% if object %}
+                    <div class="competition-preview">
+                        <h4>Competition Preview</h4>
+                        <div class="competition-preview-content">
+                            {% if object.image %}
+                            <img src="{{ object.image }}" alt="{{ object.title }}">
+                            {% endif %}
+                            <div>
+                                <h5>{{ object.title }}</h5>
+                                <p>Hosted by: {{ object.club.title }}</p>
+                                <small>📅 {{ object.date|date:"F j, Y" }} • 👥 {{ object.participants_count|default:"0" }} registered</small>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <form class="delete-form" action="" method="post">
                     {% csrf_token %}
-                    <button type="submit">Delete</button>
+
+                    {% for field in form %}
+                        <div class="form-group" style="display: none;">
+                            {{ field }}
+                        </div>
+                    {% endfor %}
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary btn-danger">
+                            <i>🗑️</i> Permanently Delete Competition
+                        </button>
+                        <a href="javascript:history.back()" class="btn-secondary">
+                            <i>✖</i> Cancel
+                        </a>
+                    </div>
                 </form>
             </div>
-        </section>
+        </div>
+
+        <!-- Back to Top Button -->
+        <button class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
     </main>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Back to Top Button visibility
+        const backToTop = document.querySelector('.back-to-top');
+
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        // Form submission loading state with double confirmation
+        const form = document.querySelector('form');
+        const submitBtn = document.querySelector('.btn-primary');
+
+        if (form && submitBtn) {
+            form.addEventListener('submit', function(e) {
+                // Show a more detailed confirmation
+                Swal.fire({
+                    title: 'Delete Competition Forever?',
+                    text: "This will permanently delete the competition and all registrations. You won't be able to recover it!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#e74c3c',
+                    cancelButtonColor: '#7f8c8d',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Show loading state
+                        submitBtn.classList.add('loading');
+                        submitBtn.disabled = true;
+
+                        // Submit the form
+                        form.submit();
+
+                        // Show success message
+                        Swal.fire(
+                            'Deleted!',
+                            'The competition has been deleted.',
+                            'success'
+                        );
+                    } else {
+                        e.preventDefault();
+                    }
+                });
+
+                e.preventDefault();
+            });
+        }
+    });
+    </script>
+
+    <!-- SweetAlert for delete confirmation -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 {% endblock %}

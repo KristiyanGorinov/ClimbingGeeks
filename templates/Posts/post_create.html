@@ -5,16 +5,91 @@
 {% endblock %}
 {% block content %}
     <main>
-        <section id="create">
-            <div class="form">
-                <h2>New Post</h2>
+        <div class="form-container">
+            <div class="form-header">
+                <h2>Create New Post</h2>
+                <p>Share your climbing experience with the community</p>
+            </div>
 
-                <form class="create-form" action="" method="post">
-                    {{ form }}
+            <div class="form-content">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="success-message">
+                            <i>✓</i> {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form class="create-form" action="" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <button type="submit">Publish</button>
+
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">
+                                <i>📝</i> {{ field.label }}
+                            </label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <span class="helptext">{{ field.help_text }}</span>
+                            {% endif %}
+                            {% if field.errors %}
+                                <ul class="errorlist">
+                                    {% for error in field.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">
+                            <i>📤</i> Publish Post
+                        </button>
+                        <a href="javascript:history.back()" class="btn-secondary">
+                            <i>✖</i> Cancel
+                        </a>
+                    </div>
                 </form>
             </div>
-        </section>
+        </div>
+
+        <!-- Back to Top Button -->
+        <button class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
     </main>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Back to Top Button visibility
+        const backToTop = document.querySelector('.back-to-top');
+
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        // Form submission loading state
+        const form = document.querySelector('form');
+        const submitBtn = document.querySelector('.btn-primary');
+
+        if (form && submitBtn) {
+            form.addEventListener('submit', function(e) {
+                submitBtn.classList.add('loading');
+                submitBtn.disabled = true;
+            });
+        }
+
+        // Auto-resize textareas
+        const textareas = document.querySelectorAll('textarea');
+        textareas.forEach(textarea => {
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+        });
+    });
+    </script>
 {% endblock %}

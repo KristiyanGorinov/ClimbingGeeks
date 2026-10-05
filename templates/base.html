@@ -5,57 +5,274 @@
     <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="stylesheet" href="{% static 'styles/navigation.css' %}"/>
-    {% block extra_css %}
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer" />
+
+    <!-- Main Navigation CSS -->
+    <link rel="stylesheet" href="{% static 'styles/navigation.css' %}"/>
+
+    {% block extra_css %}
     {% endblock %}
+
     <title>ClimbingGeeks</title>
+
+    <!-- Base Styles to match public page -->
+    <style>
+        :root {
+            --primary: #206c5c;
+            --primary-dark: #1a5749;
+            --primary-light: #2a8c72;
+            --secondary: #f97316;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --gray: #6b7280;
+            --gray-light: #e5e7eb;
+            --white: #ffffff;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Background Pattern matching public page */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 80%, rgba(32, 108, 92, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(42, 140, 114, 0.05) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        #wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Main content area */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Icon styling */
+        .icon {
+            display: inline-block;
+            font-style: normal;
+            font-weight: normal;
+            line-height: 1;
+            font-family: 'Segoe UI Symbol', 'Arial Unicode MS', sans-serif;
+        }
+    </style>
 </head>
 <body>
+    <!-- Background Pattern -->
+    <div class="bg-pattern"></div>
+
 <div id="wrapper">
-    <!-- Navbar -->
-    {% if request.user.is_authenticated %}
-        <a id="logo" href="{% url 'user-home' %}">
-            <img id="logo-img" src="{% static 'images/logo.png' %}" class="logo" alt="logo"/>
-        </a>
-    {% else %}
-        <a id="logo" href="{% url 'home' %}">
-            <img id="logo-img" src="{% static 'images/logo.png' %}" class="logo" alt="logo"/>
-        </a>
-    {% endif %}
-    <header>
-        <nav>
-            {% if request.user.is_authenticated %}
-                <div class="user">
-                    <a href={% url 'user-home' %}>Home</a>
-                    <a href="{% url 'about' %}">About me</a>
-                    <a href="{% url 'posts' %}">Posts</a>
-                    <a href="{% url 'clubs' %}">Clubs</a>
-                    <a href="{% url 'competitions' %}">Upcoming Competitions</a>
-                    <a href="{% url 'profile' %}">{{ request.user }}</a>
+    <!-- Navigation (SAME AS PUBLIC PAGE) -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'user-home' %}">
+                {% else %}
+                    <a href="{% url 'home' %}">
+                {% endif %}
+                    <img src="{% static 'images/logo.png' %}" alt="ClimbingGeeks Logo" class="nav-logo">
+                    <span class="brand-text">ClimbingGeeks</span>
+                </a>
+            </div>
+
+            <div class="nav-menu">
+                {% if request.user.is_authenticated %}
+                    <!-- Authenticated User Navigation -->
+                    <a href="{% url 'user-home' %}" class="nav-link {% if request.path == '/user-home/' or request.path == '/' %}active{% endif %}">
+                        <span class="icon">🏠</span>
+                        <span>Home</span>
+                    </a>
+                    <a href="{% url 'about' %}" class="nav-link {% if request.path == '/about/' %}active{% endif %}">
+                        <span class="icon"></span>
+                        <span>About</span>
+                    </a>
+                    <a href="{% url 'posts' %}" class="nav-link {% if '/posts/' in request.path %}active{% endif %}">
+                        <span class="icon"></span>
+                        <span>Posts</span>
+                    </a>
+                    <a href="{% url 'clubs' %}" class="nav-link {% if '/clubs/' in request.path %}active{% endif %}">
+                        <span class="icon"></span>
+                        <span>Clubs</span>
+                    </a>
+                    <a href="{% url 'competitions' %}" class="nav-link {% if '/competitions/' in request.path %}active{% endif %}">
+                        <span class="icon"></span>
+                        <span>Competitions</span>
+                    </a>
+                    <a href="{% url 'profile' %}" class="nav-link {% if '/profile/' in request.path %}active{% endif %}">
+                        <span class="icon">👤</span>
+                        <span>{{ request.user.username|truncatechars:15 }}</span>
+                    </a>
                     {% if request.user.is_staff or request.user.is_superuser %}
-                        <a href="{% url 'admin-panel' %}">Admin Panel</a>
+                        <a href="{% url 'admin-panel' %}" class="nav-link admin-link">
+                            <span class="icon">⚙️</span>
+                            <span>Admin</span>
+                        </a>
                     {% endif %}
-                </div>
-            {% else %}
-                <div class="guest">
-                    <a href="{% url 'home' %}">Home</a>
-                    <a href="{% url 'about' %}">About me</a>
-                    <a href="{% url 'register' %}">Create User's Profile</a>
-                    <a href="{% url 'login' %}">Login into Profile</a>
-                </div>
-            {% endif %}
+                {% else %}
+                    <!-- Guest Navigation (SAME AS PUBLIC PAGE) -->
+                    <a href="{% url 'home' %}" class="nav-link {% if request.path == '/' %}active{% endif %}">
+                        <span class="icon">🏠</span>
+                        <span>Home</span>
+                    </a>
+                    <a href="{% url 'about' %}" class="nav-link {% if request.path == '/about/' %}active{% endif %}">
+                        <span class="icon"></span>
+                        <span>About</span>
+                    </a>
+                    <a href="{% url 'register' %}" class="nav-link highlight">
+                        <span class="icon"></span>
+                        <span>Join</span>
+                    </a>
+                    <a href="{% url 'login' %}" class="nav-link cta-nav">
+                        <span class="icon">🔑</span>
+                        <span>Sign In</span>
+                    </a>
+                {% endif %}
+            </div>
+
+            <button class="mobile-menu-btn">
+                <span class="icon">☰</span>
+            </button>
         </nav>
     </header>
 
-    {% block content %}
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}
+        {% endblock %}
+    </main>
 
-    {% endblock %}
+    <!-- Footer (SAME AS PUBLIC PAGE) -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <img src="{% static 'images/logo.png' %}" alt="ClimbingGeeks Logo" class="footer-logo">
+                <div>
+                    <h3>ClimbingGeeks</h3>
+                    <p>Connecting climbers worldwide</p>
+                </div>
+            </div>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2024 ClimbingGeeks by Kristiyan. All rights reserved.</p>
+            <div class="footer-links">
+                <div class="link-group">
+                    <h4>Platform</h4>
+                    <a href="{% url 'home' %}">Home</a>
+                    <a href="{% url 'about' %}">About</a>
+                    <a href="{% url 'register' %}">Join</a>
+                    <a href="{% url 'login' %}">Login</a>
+                </div>
+
+                <div class="link-group">
+                    <h4>Community</h4>
+                    <a href="{% url 'competitions' %}">Events</a>
+                    <a href="{% url 'posts' %}">Forums</a>
+                    <a href="{% url 'posts' %}">Blog</a>
+                    <a href="{% url 'clubs' %}">Clubs</a>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2024 <strong>ClimbingGeeks</strong> by Kristiyan. All rights reserved.</p>
+        </div>
     </footer>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top">
+        <span class="icon">↑</span>
+    </button>
 </div>
+
+<!-- JavaScript -->
+<script>
+    // Mobile menu toggle
+    document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
+        document.querySelector('.nav-menu').classList.toggle('active');
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(event) {
+        const navMenu = document.querySelector('.nav-menu');
+        const mobileBtn = document.querySelector('.mobile-menu-btn');
+
+        if (!navMenu.contains(event.target) && !mobileBtn.contains(event.target)) {
+            navMenu.classList.remove('active');
+        }
+    });
+
+    // Back to top button
+    const backToTop = document.querySelector('.back-to-top');
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 300) {
+            backToTop.classList.add('visible');
+        } else {
+            backToTop.classList.remove('visible');
+        }
+    });
+
+    backToTop.addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            if(targetId === '#') return;
+            const targetElement = document.querySelector(targetId);
+            if(targetElement) {
+                targetElement.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+</script>
+
+{% block extra_js %}
+{% endblock %}
 </body>
 </html>

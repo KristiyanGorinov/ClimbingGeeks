@@ -27,10 +27,9 @@ from django.contrib.auth.decorators import login_required
 from users.models import *
 
 
-class HomeView(ListView):
-    model = User
-    success_url = reverse_lazy('home')
+class HomeView(TemplateView):
     template_name = 'public/public-page.html'
+
 
 
 class AboutView(ListView):
@@ -528,7 +527,7 @@ def register_user(request):
                 with transaction.atomic():
                     user = form.save()
 
-                    group = Group.objects.get(name='user')
+                    group, created = Group.objects.get_or_create(name='user')
                     user.groups.add(group)
 
                     existing_users_record = Users.objects.filter(user=user).first()
@@ -572,8 +571,7 @@ def login_user(request):
     return render(request, 'user/login-user.html')
 
 
-@login_required(login_url='login')
-@allowed_users(allowed_roles=['admin', 'user', 'staff'])
+
 def logout_user(request):
     logout(request)
     return redirect('home')
